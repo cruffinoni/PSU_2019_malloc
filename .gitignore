@@ -99,6 +99,10 @@ gen
 cmake-build-debug
 CMakeLists.txt
 
-MyGKrellm
 a.out
 .vscode
+
+lib_malloc.so
+malloc
+test_malloc
+force_test

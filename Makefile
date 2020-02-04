@@ -1,50 +1,49 @@
 ##
-## EPITECH PROJECT, 2018
+## EPITECH PROJECT, 2019
 ## makefile
 ## File description:
 ## This file is used for compilation of src and lib
 ##
 
-SRC	= 		./src/malloc.c
+SRC	= 		./src/malloc.c	\
+			./src/binary_tree.c	 \
+			./src/binary_add.c
 
-MAIN_FILE	=
-SRC_TEST	=	./tests/automated/env.c
+SRC_TEST	=	./tests/simple.c
 
 NAME			=	malloc
-NAME_TEST		=	test_mysh
+NAME_TEST		=	test_malloc
 INCLUDE_PATH	=	./include/
 
 CFLAGS		=	-Wall -Wextra -I $(INCLUDE_PATH)
-ALL_SRC		=	$(SRC) $(SRC_CMDS) $(PARSING)
-OBJ			=	$(ALL_SRC:.c=.o)
-OBJ_MAIN	=	$(MAIN_FILE:.c=.o)
+OBJ			=	$(SRC:.c=.o)
+LIB_NAME	=	lib_malloc.so
 
-$(NAME): $(OBJ) $(OBJ_MAIN)
-	gcc -o $(NAME) $(OBJ) $(OBJ_MAIN) $(CFLAGS)
-
-all: $(NAME)
+all: $(OBJ)
+	gcc -shared -o $(LIB_NAME) -fPIC $(SRC) $(CFLAGS)
 
 debug:
-	gcc -o $(NAME) $(ALL_SRC) $(MAIN_FILE) $(CFLAGS) -g
+	gcc -o $(NAME) $(SRC) $(MAIN_FILE) $(CFLAGS) -g
 
-tests_run:
-	gcc -o $(NAME_TEST) $(SRC_TEST) $(ALL_SRC) $(CFLAGS) -I ./tests/ -lcriterion --coverage
+tests_run: all
+	gcc -o $(NAME_TEST) $(SRC_TEST) $(CFLAGS) -I ./tests/
+
+force_tests:
+	gcc $(SRC) $(SRC_TEST) $(CFLAGS) -o force_test -g
 
 clean:
-	@rm -f $(OBJ) $(OBJ_MAIN) $(LIB_NAME)
-	$(MAKE) -C $(LIB_PATH) clean
+	@rm -f $(OBJ) $(LIB_NAME)
 
 fclean:
-	rm -f $(OBJ) $(OBJ_MAIN) $(LIB_NAME)
+	rm -f $(OBJ) $(LIB_NAME)
 	@rm -f $(NAME) $(NAME_TEST)
-	$(MAKE) -C $(LIB_PATH) fclean
 
 clean_prog_obj:
 	@rm -f $(OBJ)
 
-re_ex: clean_prog_obj $(OBJ) $(OBJ_MAIN)
+re_ex: clean_prog_obj $(OBJ)
 	@rm -f $(NAME)
-	gcc -o $(NAME) $(OBJ) $(OBJ_MAIN) $(CFLAGS)
+	gcc -o $(NAME) $(OBJ) $(CFLAGS)
 
 re:		fclean all
 
