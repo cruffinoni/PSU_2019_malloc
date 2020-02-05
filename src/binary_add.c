@@ -42,3 +42,10 @@ void *add_leaf(chunk_t *chunk, size_t size)
     }
     return (GET_DATA_ADDRESS(chunk));
 }
+
+
+/*
+ * |------|
+ * [*<>---|
+ * [*<<>>
+ */

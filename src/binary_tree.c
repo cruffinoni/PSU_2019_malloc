@@ -36,9 +36,8 @@ void *init_chuck(size_t size)
 {
     const unsigned int page_size = sysconf(_SC_PAGESIZE);
     size_t real_size = CALCULATE_REAL_SIZE(size);
-    //void *ptr = sbrk(sizeof(chunk_t) + real_size);
 
-    master_chuck = sbrk(real_size) - real_size;
+    master_chuck = sbrk(real_size);
     printf("[MASTER CHUCK] %p -> %zu\n", master_chuck, real_size);
     //printf("Allocated: %zu\n", sizeof(chunk_t) + real_size);
     //printf("Size of chunk: %zu\n", sizeof(chunk_t));
