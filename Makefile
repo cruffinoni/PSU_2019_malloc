@@ -14,12 +14,13 @@ SRC_TEST	=	./tests/simple.c
 NAME			=	malloc
 NAME_TEST		=	test_malloc
 INCLUDE_PATH	=	./include/
+FORCE_TEST		=	force_test
 
 CFLAGS		=	-Wall -Wextra -I $(INCLUDE_PATH)
 OBJ			=	$(SRC:.c=.o)
 LIB_NAME	=	lib_malloc.so
 
-all: $(OBJ)
+all:
 	gcc -shared -o $(LIB_NAME) -fPIC $(SRC) $(CFLAGS)
 
 debug:
@@ -29,13 +30,14 @@ tests_run: all
 	gcc -o $(NAME_TEST) $(SRC_TEST) $(CFLAGS) -I ./tests/
 
 force_tests:
-	gcc $(SRC) $(SRC_TEST) $(CFLAGS) -o force_test -g
+	gcc $(SRC) $(SRC_TEST) $(CFLAGS) -o $(FORCE_TEST)  -g
 
 clean:
 	@rm -f $(OBJ) $(LIB_NAME)
 
 fclean:
 	rm -f $(OBJ) $(LIB_NAME)
+	rm -f $(FORCE_TEST) $(LIB_NAME)
 	@rm -f $(NAME) $(NAME_TEST)
 
 clean_prog_obj:
@@ -47,4 +49,4 @@ re_ex: clean_prog_obj $(OBJ)
 
 re:		fclean all
 
-.PHONY:	all clean fclean re debug compile_lib re_ex
+.PHONY:	all clean fclean re debug compile_lib re_ex force_tests

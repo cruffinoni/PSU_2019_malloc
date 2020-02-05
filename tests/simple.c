@@ -9,6 +9,8 @@
 #include <assert.h>
 #include "malloc.h"
 
+#include <stdio.h>
+
 int main(int ac, char **av) {
     char *a = my_malloc(10);
     assert(a != NULL);
