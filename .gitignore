@@ -106,3 +106,4 @@ lib_malloc.so
 malloc
 test_malloc
 force_test
+tmp_file

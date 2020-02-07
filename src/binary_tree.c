@@ -9,14 +9,6 @@
 
 #include "malloc.h"
 
-//void find_correct_node(chunk_t *chunk, size_t size)
-//{
-//    //if (chunk->right != NULL || )
-//    if (chunk->right != NULL && chunk->right->size >= size)
-//        find_correct_node(chunk->right, size);
-//    else if (chunk->left != NULL && chunk->left->size )
-//}
-
 void *get_free_space(size_t size)
 {
     chunk_t *tmp = master_chuck;
@@ -29,7 +21,8 @@ void *get_free_space(size_t size)
     if (tmp == NULL)
         return (NULL);
     printf("Find chuck: %p w/ max size of: %zu\n", tmp, size);
-    return (add_leaf(tmp, size));
+    return (update_size(master_chuck, add_leaf(tmp, size,
+        GET_SIZE_WO_STRUCT(size))));
 }
 
 void *init_chuck(size_t size)
@@ -46,7 +39,8 @@ void *init_chuck(size_t size)
     master_chuck->left = NULL;
     master_chuck->right = NULL;
     master_chuck->free = 0;
-    return (add_leaf(master_chuck, size));
+    return (update_size(master_chuck, add_leaf(master_chuck, size,
+        GET_SIZE_WO_STRUCT(size))));
     //master_chuck->ptr = ptr;
 }
 
@@ -88,5 +82,6 @@ void *add_main_mem(size_t size)
     //tmp->ptr = NULL; // = ptr;
     //printf("Master at the end: %p -> %p\n",master_chuck, master_chuck->next);
     //printf("Is size even: %zu\n", sizeof(*tmp));
-    return (add_leaf(tmp, size));
+    return (update_size(tmp, add_leaf(tmp, size,
+        GET_SIZE_WO_STRUCT(size))));
 }

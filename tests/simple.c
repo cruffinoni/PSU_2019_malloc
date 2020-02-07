@@ -16,10 +16,14 @@ int main(int ac, char **av) {
     assert(a != NULL);
     //char *b = my_malloc(20);
     //assert(b != NULL);
-    //char *c = my_malloc(30);
+    //char *c = my_malloc(5);
     //assert(c != NULL);
     //strcpy(c, "hello world\n");
-    //write(1, c, strlen(c));
-    //free(a);
+    //write(2, c, strlen(c));
+    //char *d = my_malloc(3990);
+    //assert(d != NULL);
+    //char *e = my_malloc(6);
+    //assert(e != NULL);
+    my_free(a);
     return (0);
 }

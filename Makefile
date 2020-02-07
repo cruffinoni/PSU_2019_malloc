@@ -5,9 +5,10 @@
 ## This file is used for compilation of src and lib
 ##
 
-SRC	= 		./src/malloc.c	\
-			./src/binary_tree.c	 \
-			./src/binary_add.c
+SRC	= 		./src/malloc.c			\
+			./src/binary_tree.c	 	\
+			./src/binary_add.c		\
+			./src/free.c
 
 SRC_TEST	=	./tests/simple.c
 
@@ -31,6 +32,7 @@ tests_run: all
 
 force_tests:
 	gcc $(SRC) $(SRC_TEST) $(CFLAGS) -o $(FORCE_TEST)  -g
+	./$(FORCE_TEST)
 
 clean:
 	@rm -f $(OBJ) $(LIB_NAME)
