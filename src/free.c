@@ -5,47 +5,76 @@
 ** TODO: CHANGE DESCRIPTION.
 */
 
+#include <signal.h>
 #include "malloc.h"
+
+chunk_t *freed_chuck = NULL;
 
 #include <stdio.h>
 
-static chunk_t *free_ptr(chunk_t *root, void *ptr)
+static void move_brk()
 {
-    chunk_t *freed = NULL;
+    chunk_t *tmp = master_chuck->last;
 
-    if (GET_DATA_ADDRESS(root) == ptr) {
-        root->free = 1;
-        //printf("Setting %p (%zu) to free!\n", root, root->malloc_size);
-        return (root);
-    }
-    if (root->left != NULL)
-        freed = free_ptr(root->left, ptr);
-    if (freed == NULL && root->right != NULL)
-        freed = free_ptr(root->right, ptr);
-    if (freed != NULL)
-        root->size += freed->size;
-    return (NULL);
+    //printf("Moving brk\n");
+    //printf("prev: %p & %u\n", tmp->prev, tmp->prev->size);
+    if (tmp->prev != NULL)
+        master_chuck->last = tmp->prev;
+    //printf("mem alloc: %u\n", master_chuck->alloc_mem);
+    master_chuck->alloc_mem = (ptrdiff_t) tmp - (ptrdiff_t) master_chuck;
+    //printf("New mem alloc: %u & %u\n", master_chuck->alloc_mem, master_chuck->curr_mem);
+    if (freed_chuck->last == tmp)
+        freed_chuck = NULL;
+    //brk(tmp);
 }
 
-//void my_free(void *ptr)
+static void add_node(chunk_t *ptr)
+{
+    chunk_t *last = freed_chuck->last;
+    //unsigned char last_node = 0;
+
+    //if (ptr->next != NULL)
+    //    ptr->next->prev = ptr->prev;
+    //if (ptr->next == NULL)
+    //    last_node = 1;
+    //if (ptr->prev != NULL)
+    //    ptr->prev->next = ptr->next;
+    if (last == NULL)
+        last = freed_chuck;
+    last->next = ptr;
+    last->next->next = NULL;
+    last->next->prev = last;
+    last->next->free = 1;
+    if (ptr->next)
+        move_brk();
+    unlock_mutex();
+}
+
+static void init_free_chuck(chunk_t *ptr)
+{
+    freed_chuck = ptr;
+    freed_chuck->free = 1;
+    freed_chuck->last = NULL;
+    freed_chuck->next = NULL;
+    freed_chuck->prev = NULL;
+    unlock_mutex();
+}
+
 void free(void *ptr)
 {
-    if (ptr == NULL)
-        return;
-    //printf("ptr passed: %p\n", ptr);
-
-    chunk_t *tmp = master_chuck;
-    ptrdiff_t ptr_val = (ptrdiff_t) ptr;
-    while (tmp != NULL && !PTR_IN_RANGE(tmp, ptr_val)) {
-        //printf("%tx < %tx && %tx < %tx\n", (ptrdiff_t) tmp, ptr_val, ptr_val,
-        //    (ptrdiff_t) tmp + (ptrdiff_t) tmp->size);
-        tmp = tmp->next;
-    }
-    if (tmp == NULL) {
-        //printf("Nothing found for ptr: %p\n", ptr);
-        return;
-    }
-    //printf("%p must be inside %p w/ %zu\n", ptr, tmp, tmp->size);
-    free_ptr(tmp, ptr);
-    //printf("%p has now %zu as size\n", tmp, tmp->size);
+    //chunk_t *chuck_addr;
+    //
+    write(1, "b", 1);
+    //if (ptr == NULL)
+    //    return;
+    ////if (master_chuck == NULL)
+    ////    raise(SIGSEGV);
+    //lock_mutex();
+    //chuck_addr = GET_CHUCK_ADDRESS(ptr);
+    ////printf("Ptr: %p & %u\n", chuck_addr, chuck_addr->free);
+    ////if (!IS_VALID_FREE(chuck_addr) || master_chuck == NULL)
+    ////    raise(SIGSEGV);
+    //if (freed_chuck == NULL)
+    //    return (init_free_chuck(chuck_addr));
+    //add_node(chuck_addr);
 }

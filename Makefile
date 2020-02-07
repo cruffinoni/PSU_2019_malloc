@@ -6,26 +6,27 @@
 ##
 
 SRC	= 		./src/malloc.c			\
-			./src/binary_tree.c	 	\
-			./src/binary_add.c		\
-			./src/free.c
+			./src/free.c			\
+			./src/mutex.c			\
+			./src/realloc.c			\
+#			./src/calloc.c			\
 
-SRC_TEST	=	./tests/str_malloc.c
+SRC_TEST	=	./tests/simple.c
 
 NAME			=	malloc
 NAME_TEST		=	test_malloc
 INCLUDE_PATH	=	./include/
 FORCE_TEST		=	force_test
 
-CFLAGS		=	-Wall -Wextra -I $(INCLUDE_PATH)
+CFLAGS		=	-Wall -Wextra -I $(INCLUDE_PATH) -fPIC
 OBJ			=	$(SRC:.c=.o)
 LIB_NAME	=	lib_malloc.so
 
-all:
-	gcc -shared -o $(LIB_NAME) -fPIC $(SRC) $(CFLAGS)
+all: $(OBJ)
+	gcc -shared -o $(LIB_NAME) $(OBJ) $(CFLAGS)
 
 debug:
-	gcc -o $(NAME) $(SRC) $(MAIN_FILE) $(CFLAGS) -g
+	gcc -o $(NAME) $(SRC) $(MAIN_FILE) $(SRC_TEST) $(CFLAGS) -g
 
 tests_run: all
 	gcc -o $(NAME_TEST) $(SRC_TEST) $(CFLAGS) -I ./tests/

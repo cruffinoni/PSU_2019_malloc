@@ -42,14 +42,14 @@ static char *malloc_tab(char **tab, char const *str)
             quotes = str[i] == '\"' == !quotes;
         }
         else if (previous_size > 0) {
-            tab[j++] = malloc(sizeof(char) * (previous_size + 1));
+            tab[j++] = my_malloc(sizeof(char) * (previous_size + 1));
             if (tab[j - 1] == NULL)
                 return (NULL);
             previous_size = 0;
         }
     }
     if (previous_size > 0)
-        tab[j++] = malloc(sizeof(char) * (previous_size + 1));
+        tab[j++] = my_malloc(sizeof(char) * (previous_size + 1));
     if (tab[j - 1] == NULL)
         return (NULL);
     tab[j] = NULL;
@@ -84,7 +84,7 @@ char **my_str_to_word_array(char const *str)
 
     if (words == 0)
         return (NULL);
-    tab = malloc(sizeof(char *) * (words + 1));
+    tab = my_malloc(sizeof(char *) * (words + 1));
     if (tab == NULL)
         return (NULL);
     if (malloc_tab(tab, str) == NULL)
@@ -95,10 +95,14 @@ char **my_str_to_word_array(char const *str)
 
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 
 int main(int ac, char **av) {
-    char **tab = my_str_to_word_array("hello world I here");
-    for (int i = 0; tab[i] != NULL; i++)
+    char **tab = my_str_to_word_array("hello world IAM");
+    for (int i = 0; tab[i] != NULL; i++) {
         write(1, tab[i], strlen(tab[i]));
+        my_free(tab[i]);
+    }
+    my_free(tab);
     return (0);
 }
