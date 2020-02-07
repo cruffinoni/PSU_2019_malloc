@@ -7,11 +7,33 @@
 
 #include <stdio.h>
 
+#include <stdint.h>
 #include "malloc.h"
+
+chunk_t *use_existing_leaf(chunk_t *root, size_t size, chunk_t **best)
+{
+    //chunk_t *find = NULL;
+    size_t best_size = (*best) == NULL ? SIZE_MAX : (*best)->malloc_size;
+
+    //printf("Root %p looking for an existing leaf w/ %zu - Actual best: %p\n", root, size, *best);
+    if (root->right != NULL && root->right->malloc_size >= size &&
+    root->right->malloc_size < best_size && root->right->free) {
+        *best = root->right;
+        return (use_existing_leaf(root->right, size, best));
+    }
+    else if (root->left != NULL && root->left->malloc_size >= size &&
+    root->left->malloc_size < best_size && root->left->free) {
+        *best = root->left;
+        return (use_existing_leaf(root->left, size, best));
+    }
+    //printf("Returning... %p\n", best);
+    return (*best);
+}
 
 void *get_free_space(size_t size)
 {
     chunk_t *tmp = master_chuck;
+    chunk_t *best = NULL;
 
     if (master_chuck == NULL)
         return (NULL);
@@ -20,8 +42,15 @@ void *get_free_space(size_t size)
     }
     if (tmp == NULL)
         return (NULL);
-    printf("Find chuck: %p w/ max size of: %zu\n", tmp, size);
-    return (update_size(master_chuck, add_leaf(tmp, size,
+    //printf("tmp before: %p\n", tmp);
+    if (use_existing_leaf(tmp, GET_SIZE_WO_STRUCT(size), &best) != NULL) {
+        //printf("Best is: %p w/ %u size\n", best, (best != NULL ? best->size : 0));
+        best->free = 0;
+        return (update_size(tmp, best));
+    }
+    //printf("Find chuck: %p w/ max size of: %zu\n", tmp, size);
+    //printf("CREATING A NEW LEAF\n");
+    return (update_size(tmp, add_leaf(tmp, size,
         GET_SIZE_WO_STRUCT(size))));
 }
 
@@ -31,7 +60,7 @@ void *init_chuck(size_t size)
     size_t real_size = CALCULATE_REAL_SIZE(size);
 
     master_chuck = sbrk(real_size);
-    printf("[MASTER CHUCK] %p -> %zu\n", master_chuck, real_size);
+    //printf("[MASTER CHUCK] %p -> %zu\n", master_chuck, real_size);
     //printf("Allocated: %zu\n", sizeof(chunk_t) + real_size);
     //printf("Size of chunk: %zu\n", sizeof(chunk_t));
     master_chuck->size = real_size;
@@ -51,13 +80,13 @@ void *add_main_mem(size_t size)
     size_t real_size = CALCULATE_REAL_SIZE(size);
     //void *ptr;
 
-    printf("add main mem is called w/ %zu\n", real_size);
+    //printf("add main mem is called w/ %zu\n", real_size);
     //printf("\n\nMaster: %p w/ %p\n", master_chuck, master_chuck->next);
     while (tmp->next != NULL)
         tmp = tmp->next;
     if (tmp == NULL)
         return (NULL);
-    printf("Is master? %p & %p\n", master_chuck, tmp);
+    //printf("Is master? %p & %p\n", master_chuck, tmp);
     //ptr = sbrk(sizeof(chunk_t) + real_size);
     sbrk(real_size);
     //sbrk(sizeof(chunk_t) + real_size);

@@ -11,8 +11,9 @@
 
 void *update_size(chunk_t *chunk, chunk_t *update)
 {
-    printf("Updating %p (%zu) w/ %p (%zu)\n", chunk, chunk->size, update, update->size);
+    //printf("Updating %p (%zu) w/ %p (%zu)\n", chunk, chunk->size, update, update->size);
     chunk->size -= update->size;
+    //printf("Returning address... %p\n", GET_DATA_ADDRESS(update));
     return (GET_DATA_ADDRESS(update));
 }
 
@@ -28,12 +29,12 @@ static void init_leaf(chunk_t *chunk, size_t size, size_t malloc_size)
 
 chunk_t *add_leaf(chunk_t *chunk, size_t size, size_t malloc_size)
 {
-    printf("add leaf is called (w/ %zu) from %p (-> %zu)\n", size, chunk, chunk->size);
+    //printf("add leaf is called (w/ %zu) from %p (-> %zu)\n", size, chunk, chunk->size);
     if (chunk->left == NULL) {
-        printf("Add left leaf w/ tmp: %zu\n", sizeof(chunk_t));
+        //printf("Add left leaf w/ tmp: %zu\n", sizeof(chunk_t));
         chunk_t *tmp = ((chunk_t *) ((ptrdiff_t) chunk + (sizeof(chunk_t))));
         if (tmp->size != 0) {
-            printf("double chunkt, size isn't 0\n");
+            //printf("double chunkt, size isn't 0\n");
             chunk->left = ((chunk_t *) ((ptrdiff_t) chunk + (sizeof(chunk_t) * 2)));
         }
         else
@@ -42,7 +43,7 @@ chunk_t *add_leaf(chunk_t *chunk, size_t size, size_t malloc_size)
             GET_SIZE_WO_STRUCT(size));
         return (chunk->left);
     } else if (chunk->right == NULL) {
-        printf("Add right leaf (%zu)\n", size);
+        //printf("Add right leaf (%zu)\n", size);
         chunk->right = ((chunk_t *) ((ptrdiff_t) chunk->left + sizeof(chunk_t)));
         init_leaf(chunk->right, size, GET_SIZE_WO_STRUCT(size));
         return (chunk->right);

@@ -27,8 +27,8 @@ void *my_malloc(size_t size);
     t < ((ptrdiff_t) c + (ptrdiff_t) c->size))
 
 typedef struct chuck_s {
-    size_t size;
-    size_t malloc_size;
+    unsigned int size;
+    unsigned int malloc_size;
     //void *ptr;
     unsigned char free;
     struct chuck_s *right;

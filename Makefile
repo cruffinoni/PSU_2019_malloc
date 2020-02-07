@@ -10,7 +10,7 @@ SRC	= 		./src/malloc.c			\
 			./src/binary_add.c		\
 			./src/free.c
 
-SRC_TEST	=	./tests/simple.c
+SRC_TEST	=	./tests/str_malloc.c
 
 NAME			=	malloc
 NAME_TEST		=	test_malloc

@@ -14,16 +14,18 @@
 int main(int ac, char **av) {
     char *a = my_malloc(10);
     assert(a != NULL);
-    //char *b = my_malloc(20);
-    //assert(b != NULL);
-    //char *c = my_malloc(5);
-    //assert(c != NULL);
+    char *b = my_malloc(20);
+    assert(b != NULL);
+    char *c = my_malloc(5);
+    assert(c != NULL);
+    my_free(c);
+    c = my_malloc(5);
     //strcpy(c, "hello world\n");
     //write(2, c, strlen(c));
-    //char *d = my_malloc(3990);
-    //assert(d != NULL);
-    //char *e = my_malloc(6);
-    //assert(e != NULL);
+    char *d = my_malloc(3990);
+    assert(d != NULL);
+    char *e = my_malloc(6);
+    assert(e != NULL);
     my_free(a);
     return (0);
 }
