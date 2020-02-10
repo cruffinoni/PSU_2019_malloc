@@ -8,28 +8,33 @@
 #include <string.h>
 #include "malloc.h"
 
+
+#include <stdio.h>
 void *realloc(void *ptr, size_t size)
+//void *my_realloc(void *ptr, size_t size)
 {
+    write(1, "c", 1);
+    //printf("Realloc called. Master: %p & last: %p\n",
+    //    master_chuck, master_chuck == NULL ? NULL : master_chuck->last);
     void *new_ptr = malloc(size);
-    write(1, "f", 1);
+    unsigned int old_size;
 
     lock_mutex();
-    write(1, "w", 1);
     if (size == 0 || new_ptr == NULL) {
+        write(1, "RETURNING NULLL!!!\n", 19);
         unlock_mutex();
-        if (new_ptr != NULL)
-            free(new_ptr);
-        write(1, "z", 1);
+        //if (new_ptr != NULL)
+        //    free(new_ptr);
         return (NULL);
     }
-    write(1, "y", 1);
-    if (size < ((chunk_t *)((void *)ptr - sizeof(chunk_t)))->size)
-        new_ptr = memcpy(new_ptr, ptr, size);
+    old_size = ((chunk_t *)((void *)ptr - sizeof(chunk_t)))->size;
+    if (size > old_size)
+        memcpy(new_ptr, ptr, old_size);
     else
-        new_ptr = memcpy(new_ptr, ptr,
-            ((chunk_t *)((void *)ptr - sizeof(chunk_t)))->size);
-    write(1, "x", 1);
+        memcpy(new_ptr, ptr, size);
     unlock_mutex();
-    free(ptr);
+    //free(ptr);
+    //printf("Realloc after. Master: %p & last: %p & ? %p\n",
+    //    master_chuck, master_chuck->last, master_chuck->next);
     return (new_ptr);
 }

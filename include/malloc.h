@@ -15,6 +15,7 @@ void *malloc(size_t size);
 void free(void *ptr);
 void my_free(void *ptr);
 void *my_malloc(size_t size);
+void *my_calloc(size_t nmemb, size_t size);
 void *my_realloc(void *ptr, size_t size);
 void *calloc(size_t nmemb, size_t size);
 void *realloc(void *ptr, size_t size);
@@ -26,13 +27,13 @@ void *realloc(void *ptr, size_t size);
     #define SYS_ALIGN (8)
 #endif
 
-    #define GET_DATA_ADDRESS(c) ((void *) ((void *) c + sizeof(chunk_t)))
+    #define GET_DATA_ADDRESS(c) ((void *) ((ptrdiff_t) c + sizeof(chunk_t)))
     #define GET_CHUCK_ADDRESS(p) ((chunk_t *) ((ptrdiff_t) p - sizeof(chunk_t)))
-    #define GET_NEXT_CHUNK(c) ((chunk_t *) ((void *) c + \
+    #define GET_NEXT_CHUNK(c) ((chunk_t *) ((ptrdiff_t) c + \
     (c->size + sizeof(chunk_t))))
     #define IS_VALID_FREE(c) (c->free != 1 || (c->free != 0 && c->free != 1))
     #define ALIGN_SIZE(s) ((s + (SYS_ALIGN - 1)) & -SYS_ALIGN)
-    #define MAP_SIZE ALIGN_SIZE((SYS_ALIGN * 10 * sysconf(_SC_PAGESIZE)))
+    #define MAP_SIZE ALIGN_SIZE((SYS_ALIGN * sysconf(_SC_PAGESIZE)))
 
 typedef struct chunck_s {
     unsigned int size;

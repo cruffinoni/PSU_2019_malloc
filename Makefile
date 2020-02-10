@@ -8,8 +8,8 @@
 SRC	= 		./src/malloc.c			\
 			./src/free.c			\
 			./src/mutex.c			\
-#			./src/calloc.c			\
-#			./src/realloc.c			\
+			./src/calloc.c			\
+			./src/realloc.c			\
 
 SRC_TEST	=	./tests/simple.c
 
