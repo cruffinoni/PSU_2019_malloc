@@ -12,7 +12,7 @@
 void *realloc(void *ptr, size_t size)
 {
     void *new_ptr = malloc(size);
-    unsigned int old_size;
+    uint old_size;
 
     if (size == 0 || new_ptr == NULL) {
         errno = ENOMEM;

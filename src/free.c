@@ -16,7 +16,7 @@ void free(void *ptr)
         return;
     chuck_addr = (chunk_t *) ((void *) ptr - STRUCT_SIZE);
     if (!IS_VALID_FREE(chuck_addr) || master_chuck == NULL)
-        raise(SIGABRT);
+        raise(SIGSEGV);
     chuck_addr->free = 1;
     if (master_chuck != NULL && master_chuck->hf_mem < chuck_addr->size)
         master_chuck->hf_mem = chuck_addr->size;
