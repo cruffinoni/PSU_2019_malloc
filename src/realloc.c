@@ -21,8 +21,8 @@ void *realloc(void *ptr, size_t size)
 
     if (size == 0 || new_ptr == NULL) {
         //write(1, "RETURNING NULL!", 15);
-        if (new_ptr != NULL)
-            free(new_ptr);
+        //if (new_ptr != NULL)
+        //    free(new_ptr);
         return (NULL);
     }
     if (ptr == NULL) {
@@ -34,7 +34,7 @@ void *realloc(void *ptr, size_t size)
         memcpy(new_ptr, ptr, old_size);
     else
         memcpy(new_ptr, ptr, size);
-    free(ptr);
+    //free(ptr);
     //printf("Realloc after. Master: %p & last: %p & ? %p\n",
     //    master_chuck, master_chuck->last, master_chuck->next);
     return (new_ptr);

@@ -7,7 +7,6 @@
 
 SRC	= 		./src/malloc.c			\
 			./src/free.c			\
-			./src/mutex.c			\
 			./src/calloc.c			\
 			./src/realloc.c			\
 

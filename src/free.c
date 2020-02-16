@@ -15,7 +15,6 @@ static void move_brk()
 {
     chunk_t *last = master_chuck->last;
 
-    //printf("Moving brk\n");
     if (last->prev != NULL)
         master_chuck->last = last->prev;
     master_chuck->alloc_mem = (ptrdiff_t) last - (ptrdiff_t) master_chuck;
@@ -24,69 +23,56 @@ static void move_brk()
     brk(last);
 }
 
-static void add_node(chunk_t *ptr)
+static void move_ptr(chunk_t *ptr)
 {
-    chunk_t *last = freed_chuck->last;
-    chunk_t *last_next;
-
-    //printf("Passing here twice\n");
-    if (master_chuck->last == ptr)
-        master_chuck->last = master_chuck->last->prev;
-    else if (master_chuck == ptr) {
+    if (master_chuck == ptr) {
+        //write(1, "b1", 2);
         if (master_chuck->next != NULL)
             master_chuck->next->last = master_chuck->last;
         master_chuck = master_chuck->next;
+    } else if (master_chuck != NULL && master_chuck->last == ptr) {
+        //write(1, "b0", 2);
+        master_chuck->last = master_chuck->last->prev;
     }
-    if (last == NULL)
-        last = freed_chuck;
-    last_next = last->next;
     if (ptr->prev != NULL)
         ptr->prev->next = ptr->next;
     if (ptr->next != NULL)
         ptr->next->prev = ptr->prev;
+}
+
+static void add_node(chunk_t *ptr)
+{
+    chunk_t *last = freed_chuck->last;
+
+    move_ptr(ptr);
+    //write(1, "c0", 2);
     last->next = ptr;
     last->next->next = NULL;
     last->next->prev = last;
     last->next->free = 1;
-    if (last_next == NULL)
-        move_brk();
+    freed_chuck->last = last->next;
 }
 
 static void init_free_chuck(chunk_t *ptr)
 {
-    //printf("master & curr: %p & %p\n", master_chuck->last, ptr);
-    //printf("Last: %p & previous: %p\n", master_chuck->last, master_chuck->last->prev);
-    //printf("Master thing: %p & %p\n", master_chuck, master_chuck->next);
-    //if (master_chuck->last == ptr)
-    //    master_chuck->last = master_chuck->last->prev;
-    //else if (master_chuck == ptr) {
-    //    if (master_chuck->next != NULL)
-    //        master_chuck->next->last = master_chuck->last;
-    //    master_chuck = master_chuck->next;
-    //}
-    //printf("Last(?): %p\n", master_chuck->last);
-    //if (ptr->prev != NULL)
-    //    ptr->prev->next = ptr->next;
-    //if (ptr->next != NULL)
-    //    ptr->next->prev = ptr->prev;
+    move_ptr(ptr);
+    //write(1, "d0", 2);
     freed_chuck = ptr;
     freed_chuck->free = 1;
-    freed_chuck->last = NULL;
+    freed_chuck->last = freed_chuck;
     freed_chuck->next = NULL;
     freed_chuck->prev = NULL;
 }
 
-//void my_free(void *ptr)
 void free(void *ptr)
 {
     chunk_t *chuck_addr;
 
-    //write(1, "b", 1);
+    //write(1, "a0", 2);
     if (ptr == NULL)
         return;
-    if (master_chuck == NULL)
-        raise(SIGSEGV);
     chuck_addr = (chunk_t *) ((void *) ptr - STRUCT_SIZE);
+    //write(1, "a1", 2);
     if (!IS_VALID_FREE(chuck_addr) || master_chuck == NULL)
         raise(SIGABRT);
     chuck_addr->free = 1;
