@@ -27,15 +27,17 @@ void *realloc(void *ptr, size_t size);
     #define SYS_ALIGN (8)
 #endif
 
-    #define GET_DATA_ADDRESS(c) ((void *) ((ptrdiff_t) c + sizeof(chunk_t)))
-    #define GET_CHUCK_ADDRESS(p) ((chunk_t *) ((ptrdiff_t) p - sizeof(chunk_t)))
+#define STRUCT_SIZE     (sizeof(chunk_t))
+    #define GET_DATA_ADDRESS(c) ((void *) ((void *) c + STRUCT_SIZE))
+    #define GET_CHUCK_ADDRESS(p) ((chunk_t *) ((void *) p - sizeof(chunk_t)))
     #define GET_NEXT_CHUNK(c) ((chunk_t *) ((ptrdiff_t) c + \
-    (c->size + sizeof(chunk_t))))
+    (c->size + STRUCT_SIZE)))
     #define IS_VALID_FREE(c) (c->free != 1 || (c->free != 0 && c->free != 1))
     #define ALIGN_SIZE(s) ((s + (SYS_ALIGN - 1)) & -SYS_ALIGN)
-    #define MAP_SIZE ALIGN_SIZE((SYS_ALIGN * sysconf(_SC_PAGESIZE)))
+    #define MAP_SIZE ALIGN_SIZE((SYS_ALIGN * 10 * sysconf(_SC_PAGESIZE)))
 
 typedef struct chunck_s {
+    void *data;
     unsigned int size;
     //unsigned int malloc_size;
     //void *ptr;
@@ -53,8 +55,5 @@ typedef struct chunck_s {
 
 extern chunk_t *master_chuck;
 extern chunk_t *freed_chuck;
-
-void lock_mutex();
-void unlock_mutex();
 
 #endif

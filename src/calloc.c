@@ -6,6 +6,7 @@
 */
 
 #include <string.h>
+#include <errno.h>
 #include "malloc.h"
 
 void *calloc(size_t nmemb, size_t size)
@@ -13,11 +14,11 @@ void *calloc(size_t nmemb, size_t size)
 {
     size_t total = nmemb * size;
     void *ptr;
-    write(1, "d", 1);
+    //write(1, "d", 1);
 
-    if (total == 0)
+    if (total == 0 || ((ptr = malloc(total)) == NULL)) {
+        errno = ENOMEM;
         return (NULL);
-    if ((ptr = malloc(total)) == NULL)
-        return (NULL);
+    }
     return (memset(ptr, 0, total));
 }

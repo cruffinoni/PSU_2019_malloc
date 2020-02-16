@@ -13,14 +13,15 @@
 
 static void move_brk()
 {
-    chunk_t *tmp = master_chuck->last;
+    chunk_t *last = master_chuck->last;
 
     //printf("Moving brk\n");
-    if (tmp->prev != NULL)
-        master_chuck->last = tmp->prev;
-    master_chuck->alloc_mem = (ptrdiff_t) tmp - (ptrdiff_t) master_chuck;
-    if (freed_chuck->last == tmp)
+    if (last->prev != NULL)
+        master_chuck->last = last->prev;
+    master_chuck->alloc_mem = (ptrdiff_t) last - (ptrdiff_t) master_chuck;
+    if (freed_chuck->last == last)
         freed_chuck = NULL;
+    brk(last);
 }
 
 static void add_node(chunk_t *ptr)
@@ -49,7 +50,6 @@ static void add_node(chunk_t *ptr)
     last->next->free = 1;
     if (last_next == NULL)
         move_brk();
-    unlock_mutex();
 }
 
 static void init_free_chuck(chunk_t *ptr)
@@ -57,41 +57,40 @@ static void init_free_chuck(chunk_t *ptr)
     //printf("master & curr: %p & %p\n", master_chuck->last, ptr);
     //printf("Last: %p & previous: %p\n", master_chuck->last, master_chuck->last->prev);
     //printf("Master thing: %p & %p\n", master_chuck, master_chuck->next);
-    if (master_chuck->last == ptr)
-        master_chuck->last = master_chuck->last->prev;
-    else if (master_chuck == ptr) {
-        if (master_chuck->next != NULL)
-            master_chuck->next->last = master_chuck->last;
-        master_chuck = master_chuck->next;
-    }
+    //if (master_chuck->last == ptr)
+    //    master_chuck->last = master_chuck->last->prev;
+    //else if (master_chuck == ptr) {
+    //    if (master_chuck->next != NULL)
+    //        master_chuck->next->last = master_chuck->last;
+    //    master_chuck = master_chuck->next;
+    //}
     //printf("Last(?): %p\n", master_chuck->last);
-    if (ptr->prev != NULL)
-        ptr->prev->next = ptr->next;
-    if (ptr->next != NULL)
-        ptr->next->prev = ptr->prev;
+    //if (ptr->prev != NULL)
+    //    ptr->prev->next = ptr->next;
+    //if (ptr->next != NULL)
+    //    ptr->next->prev = ptr->prev;
     freed_chuck = ptr;
     freed_chuck->free = 1;
     freed_chuck->last = NULL;
     freed_chuck->next = NULL;
     freed_chuck->prev = NULL;
-    unlock_mutex();
 }
 
 //void my_free(void *ptr)
 void free(void *ptr)
 {
-    //chunk_t *chuck_addr;
-    //
-    write(1, "b", 1);
-    //if (ptr == NULL)
-    //    return;
-    //if (master_chuck == NULL)
-    //    raise(SIGSEGV);
-    //lock_mutex();
-    //chuck_addr = GET_CHUCK_ADDRESS(ptr);
-    //if (!IS_VALID_FREE(chuck_addr) || master_chuck == NULL)
-    //    raise(SIGSEGV);
-    //if (freed_chuck == NULL)
-    //    return (init_free_chuck(chuck_addr));
+    chunk_t *chuck_addr;
+
+    //write(1, "b", 1);
+    if (ptr == NULL)
+        return;
+    if (master_chuck == NULL)
+        raise(SIGSEGV);
+    chuck_addr = (chunk_t *) ((void *) ptr - STRUCT_SIZE);
+    if (!IS_VALID_FREE(chuck_addr) || master_chuck == NULL)
+        raise(SIGABRT);
+    chuck_addr->free = 1;
+    if (freed_chuck == NULL)
+        return (init_free_chuck(chuck_addr));
     //add_node(chuck_addr);
 }

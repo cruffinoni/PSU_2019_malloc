@@ -20,7 +20,7 @@ FORCE_TEST		=	force_test
 
 CFLAGS		=	-Wall -Wextra -I $(INCLUDE_PATH) -fPIC
 OBJ			=	$(SRC:.c=.o)
-LIB_NAME	=	lib_malloc.so
+LIB_NAME	=	libmy_malloc.so
 
 all: $(OBJ)
 	gcc -shared -o $(LIB_NAME) $(OBJ) $(CFLAGS)

@@ -32,5 +32,7 @@ int main(int ac, char **av) {
     char *f = my_malloc(100);
     //assert(f != NULL);
     my_free(a);
+    char *g = my_malloc(65536);
+    char *h = my_malloc(100);
     return (0);
 }
