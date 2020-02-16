@@ -20,33 +20,26 @@ void *my_realloc(void *ptr, size_t size);
 void *calloc(size_t nmemb, size_t size);
 void *realloc(void *ptr, size_t size);
 
-
-#ifndef __X86_64__
-    #define SYS_ALIGN (16)
-#else
-    #define SYS_ALIGN (8)
+#ifndef uint
+    typedef unsigned int uint;
 #endif
 
-#define STRUCT_SIZE     (sizeof(chunk_t))
+    #define STRUCT_SIZE     (sizeof(chunk_t))
     #define GET_DATA_ADDRESS(c) ((void *) ((void *) c + STRUCT_SIZE))
-    #define GET_CHUCK_ADDRESS(p) ((chunk_t *) ((void *) p - sizeof(chunk_t)))
-    #define GET_NEXT_CHUNK(c) ((chunk_t *) ((ptrdiff_t) c + \
+    //#define GET_CHUCK_ADDRESS(p) ((chunk_t *) ((void *) p - sizeof(chunk_t)))
+    #define GET_NEXT_CHUNK(c) ((chunk_t *) ((void *) c + \
     (c->size + STRUCT_SIZE)))
     #define IS_VALID_FREE(c) (c->free != 1 || (c->free != 0 && c->free != 1))
-    #define ALIGN_SIZE(s) ((s + (SYS_ALIGN - 1)) & -SYS_ALIGN)
-    #define MAP_SIZE ALIGN_SIZE((SYS_ALIGN * 10 * sysconf(_SC_PAGESIZE)))
+    #define ALIGN_SIZE(s) ((s + (16u - 1u)) & -16u)
+    #define MAP_SIZE ALIGN_SIZE((16u * 10u * (uint) sysconf(_SC_PAGESIZE)))
 
 typedef struct chunck_s {
-    void *data;
-    unsigned int size;
-    //unsigned int malloc_size;
-    //void *ptr;
+    uint size;
     unsigned char free;
-    //struct chuck_s *right;
-    //struct chuck_s *left;
 
-    unsigned int alloc_mem;
-    unsigned int curr_mem;
+    uint alloc_mem;
+    uint curr_mem;
+    uint hf_mem;
 
     struct chunck_s *next;
     struct chunck_s *prev;
