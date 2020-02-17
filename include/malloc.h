@@ -43,9 +43,8 @@ typedef struct chunck_s {
     struct chunck_s *next;
     struct chunck_s *prev;
     struct chunck_s *last;
-} chunk_t; //  __attribute__((packed))
+} chunk_t;
 
 extern chunk_t *master_chuck;
-extern chunk_t *freed_chuck;
 
 #endif
